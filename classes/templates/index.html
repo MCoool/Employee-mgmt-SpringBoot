@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.com">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+
+    <!-- jQuery and jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <title>Home Page</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">EMP system</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="addemp">Add EMP</a>
+            </li>
+        </ul>
+
+        <form class="form-inline" th:action="@{/}">
+            <input id="searchInput" class="form-control mr-sm-2" type="search" placeholder="Search"
+                   aria-label="Search" name="keyword" th:value="${keyword}">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+<div class="container p-5">
+<div class="table-container" style="height: 400px; overflow-y: scroll;">
+    <table class="table table-striped">
+        <thead class="bg-dark text-white">
+ 
+  <tr>
+                <th scope="col"><a href="#" onclick="sortTable('id')">ID</a></th>
+                <th scope="col"><a href="#" onclick="sortTable('name')">Name</a></th>
+                <th scope="col"><a href="#" onclick="sortTable('address')">Address</a></th>
+                <th scope="col"><a href="#" onclick="sortTable('email')">Email</a></th>
+                <th scope="col"><a href="#" onclick="sortTable('phno')">Phone No</a></th>
+                <th scope="col"><a href="#" onclick="sortTable('salary', true)">Salary</a></th>
+                <th scope="col">Action</th>
+
+      
+    </tr> 
+
+        
+        </thead>
+        <tbody id="employeeTableBody">
+        <tr th:each="e:${emp}">
+            <th th:text="${e.id}">1</th>
+            <td th:text="${e.name}"></td>
+            <td th:text="${e.address}"></td>
+            <td th:text="${e.email}"></td>
+            <td th:text="${e.phno}"></td>
+            <td th:text="${e.salary}"></td>
+            <td>
+                <a class="btn btn-sm btn-primary" th:href="@{/edit/{id}(id=${e.id})}">Edit</a>
+                <a class="btn btn-sm btn-primary" th:href="@{/delete/{id}(id=${e.id})}">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+    
+    <button id="loadMoreBtn" class="btn btn-primary">Add more data</button>
+
+    <input type="hidden" id="currentPage" th:value="${currentPage}" />
+    <input type="hidden" id="pageSize" th:value="${pageSize}" />
+ 
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:class="${currentPage == 1 ? 'disabled' : ''}">
+            <a class="page-link" th:href="@{/(pageNo=1, pageSize=${pageSize})}" aria-disabled="${currentPage == 1}">First</a>
+        </li>
+  <li class="page-item" th:class="${isFirstPage ? 'disabled' : ''}">
+    <a class="page-link" th:href="@{/(pageNo=${currentPage - 1}, pageSize=${pageSize})}">Previous</a>
+</li>
+        <li class="page-item" th:each="page: ${#numbers.sequence(1, totalPages)}" th:class="${currentPage == page ? 'active' : ''}">
+            <a class="page-link" th:href="@{/(pageNo=${page}, pageSize=${pageSize})}" th:text="${page}"></a>
+        </li>
+      <li class="page-item" th:class="${isLastPage ? 'disabled' : ''}">
+    <a class="page-link" th:href="@{/(pageNo=${currentPage + 1}, pageSize=${pageSize})}">Next</a>
+</li>
+
+        <li class="page-item" th:class="${currentPage == totalPages ? 'disabled' : ''}">
+            <a class="page-link" th:href="@{/(pageNo=${totalPages}, pageSize=${pageSize})}" aria-disabled="${currentPage == totalPages}">Last</a>
+        </li>
+    </ul>
+</nav>
+
+
+</div>
+
+
+
+<!-- Optional JavaScript; choose one of the two! -->
+
+<!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- jQuery UI -->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#searchInput').autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: '/autocomplete',
+                    type: 'GET',
+                    data: {
+                        keyword: request.term
+                    },
+                    success: function(data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                // Perform a direct search when a suggestion is selected
+                $('#searchInput').val(ui.item.value);
+                $('form').submit();
+            }
+        });
+    });
+    
+ 
+ function sortTable(column) {
+	    var sortOrder = getSortOrder(column);
+	    var url = new URL(window.location.href);
+	    url.searchParams.set("sortBy", column);
+	    url.searchParams.set("sortOrder", sortOrder);
+	    window.location.href = url.href;
+	}
+
+
+
+
+
+ function getSortOrder(column) {
+	    var currentSortOrder = new URL(window.location.href).searchParams.get("sortOrder");
+	    var currentSortColumn = getSortColumn();
+	    
+	    if (currentSortColumn === column) {
+	        if (currentSortOrder === "asc") {
+	            return "desc";
+	        } else {
+	            return "asc";
+	        }
+	    }
+	    
+	    return "asc";
+	}
+
+
+ function getSortColumn() {
+	    var url = new URL(window.location.href);
+	    return url.searchParams.get("sortBy") || "";
+	}
+
+ // Function to handle adding more data
+  $(document).on('click', '#loadMoreBtn', function() {
+    var currentPage = parseInt($('#currentPage').val());
+    var pageSize = parseInt($('#pageSize').val());
+
+    $.ajax({
+        url: '/loadMore',
+        method: 'GET',
+        data: {
+            pageNo: currentPage + 1,
+            pageSize: pageSize
+        },
+        success: function(response) {
+            var rows = $(response).find('tr');
+            $('#employeeTableBody').append(rows);
+
+            $('#currentPage').val(currentPage + 1);
+
+            var isLastPage = rows.length === 0;
+            if (isLastPage) {
+                $('#loadMoreBtn').prop('disabled', true);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log(error);
+        }
+    });
+});
+
+   
+ // Check if sorting parameters exist in the URL and set the appropriate CSS class for the sorted column
+$(document).ready(function () {
+    var url = new URL(window.location.href);
+    var sortColumn = url.searchParams.get("sortBy");
+    if (sortColumn) {
+        var sortOrder = url.searchParams.get("sortOrder");
+        var headerColumn = $('th > a[href^="#"][onclick^="sortTable"][onclick*="' + sortColumn + '"]');
+        headerColumn.addClass(sortOrder);
+    }
+});
+
+ 
+function addMoreData() {
+    var currentPage = parseInt(document.getElementById("currentPage").value) + 1;
+    var pageSize = parseInt(document.getElementById("pageSize").value);
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var newRows = xhr.responseText;
+            document.getElementById("employeeTableBody").insertAdjacentHTML("beforeend", newRows);
+            document.getElementById("currentPage").value = currentPage;
+        }
+    };
+    xhr.open("GET", "/loadMore?pageNo=" + currentPage + "&pageSize=" + pageSize, true);
+    xhr.send();
+}
+
+document.getElementById("loadMoreBtn").addEventListener("click", addMoreData);
+
+
+</script>
+
+</body>
+</html>

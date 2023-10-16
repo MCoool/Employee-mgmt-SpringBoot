@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Employee.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Emp-System</a> &gt; <a href="index.source.html" class="el_package">com.mukul.demo.entity</a> &gt; <span class="el_source">Employee.java</span></div><h1>Employee.java</h1><pre class="source lang-java linenums">package com.mukul.demo.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.*;
+
+<span class="pc bpc" id="L20" title="41 of 42 branches missed.">@Data</span>
+@Entity
+<span class="pc" id="L22">@Builder</span>
+@Getter
+@Setter
+//@AllArgsConstructor
+//@NoArgsConstructor
+@Table(name = &quot;EMP_SYSTEM&quot;)
+public class Employee {
+	
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	//@Column(name = &quot;name&quot;)
+	
+	@Pattern(regexp = &quot;[a-zA-Z ]+&quot;, message = &quot;Name should only contain alphabets&quot;)
+	private String name;
+
+
+	
+	@Size(max = 50, message = &quot;Address should be maximum 50 characters long&quot;)
+	private String address;
+	
+	@Email(message = &quot;Email should be in correct format&quot;)
+	private String email;
+	
+	@Pattern(regexp = &quot;\\d{10}&quot;, message = &quot;Phone number should be 10 digits&quot;)
+	private String phno;
+	
+	@Digits(integer = Integer.MAX_VALUE, fraction = 0, message = &quot;Salary should only contain integers&quot;)
+	private int salary;
+	
+	public int getId() {
+<span class="fc" id="L54">		return id;</span>
+	}
+	public void setId(int id) {
+<span class="nc" id="L57">		this.id = id;</span>
+<span class="nc" id="L58">	}</span>
+	public Employee(int id, String name, String address, String email, String phno, int salary) {
+<span class="fc" id="L60">		super();</span>
+<span class="fc" id="L61">		this.id = id;</span>
+<span class="fc" id="L62">		this.name = name;</span>
+<span class="fc" id="L63">		this.address = address;</span>
+<span class="fc" id="L64">		this.email = email;</span>
+<span class="fc" id="L65">		this.phno = phno;</span>
+<span class="fc" id="L66">		this.salary = salary;</span>
+<span class="fc" id="L67">	}</span>
+	public String getName() {
+<span class="nc" id="L69">		return name;</span>
+	}
+	@Override
+	public String toString() {
+<span class="fc" id="L73">		return &quot;Employee [id=&quot; + id + &quot;, name=&quot; + name + &quot;, address=&quot; + address + &quot;, email=&quot; + email + &quot;, phno=&quot; + phno</span>
+				+ &quot;, salary=&quot; + salary + &quot;]&quot;;
+	}
+	public void setName(String name) {
+<span class="nc" id="L77">		this.name = name;</span>
+<span class="nc" id="L78">	}</span>
+	public String getAddress() {
+<span class="nc" id="L80">		return address;</span>
+	}
+	public void setAddress(String address) {
+<span class="nc" id="L83">		this.address = address;</span>
+<span class="nc" id="L84">	}</span>
+	public String getEmail() {
+<span class="fc" id="L86">		return email;</span>
+	}
+	public void setEmail(String email) {
+<span class="fc" id="L89">		this.email = email;</span>
+<span class="fc" id="L90">	}</span>
+	public String getPhno() {
+<span class="nc" id="L92">		return phno;</span>
+	}
+	public void setPhno(String phno) {
+<span class="nc" id="L95">		this.phno = phno;</span>
+<span class="nc" id="L96">	}</span>
+	public int getSalary() {
+<span class="nc" id="L98">		return salary;</span>
+	}
+	public void setSalary(int salary) {
+<span class="nc" id="L101">		this.salary = salary;</span>
+<span class="nc" id="L102">	}</span>
+	public Employee() {
+<span class="fc" id="L104">		super();</span>
+		// TODO Auto-generated constructor stub
+<span class="fc" id="L106">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,6 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Emp-System,com.mukul.demo.controller,EmpController,110,106,11,7,27,21,16,3,7,3
+Emp-System,com.mukul.demo,EmpSystemApplication,5,3,0,0,2,1,1,1,1,1
+Emp-System,com.mukul.demo.entity,Employee.EmployeeBuilder,14,49,0,0,0,1,1,8,1,8
+Emp-System,com.mukul.demo.entity,Employee,209,57,41,1,14,17,32,8,11,8
+Emp-System,com.mukul.demo.service,EmpService,40,64,4,6,9,15,8,5,4,4

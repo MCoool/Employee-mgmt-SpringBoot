@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmpController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Emp-System</a> &gt; <a href="index.source.html" class="el_package">com.mukul.demo.controller</a> &gt; <span class="el_source">EmpController.java</span></div><h1>EmpController.java</h1><pre class="source lang-java linenums">package com.mukul.demo.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Sort;
+import com.mukul.demo.entity.*;
+import com.mukul.demo.service.EmpService;
+
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+
+@Controller
+//@RequestMapping(&quot;/employees&quot;)
+//@RequestMapping({ &quot;/&quot;, &quot;/index&quot; })
+public class EmpController {
+
+	@Autowired
+	private final EmpService service;
+
+	@Autowired
+<span class="fc" id="L40">	public EmpController(EmpService service) {</span>
+<span class="fc" id="L41">		this.service = service;</span>
+<span class="fc" id="L42">	}</span>
+
+//	     @GetMapping(&quot;/autocomplete&quot;)
+//	     public ArrayList&lt;Employee&gt; autocomplete(@RequestParam(&quot;searchTerm&quot;) String searchTerm) {
+//	         return service.getAutocompleteSuggestions(searchTerm);
+//	     }
+//	 
+
+	// @GetMapping(&quot;/autocomplete&quot;)
+	@RequestMapping(value = &quot;/autocomplete&quot;)
+	@ResponseBody
+	public List&lt;String&gt; autocomplete(@RequestParam(&quot;keyword&quot;) String keyword) {
+
+<span class="nc" id="L55">		service.getAutocompleteSuggestions(keyword).stream().forEach(a -&gt; System.out.println(a));</span>
+<span class="nc" id="L56">		return service.getAutocompleteSuggestions(keyword);</span>
+
+	}
+
+//	 @RequestMapping(value = &quot;search&quot;, method = RequestMethod.GET)
+//		@ResponseBody
+//		public List&lt;String&gt; search(HttpServletRequest request) {
+//			return service.getAutocompleteSuggestions(request.getParameter(&quot;searchTerm&quot;));
+//		}
+
+// working	     
+//	     @GetMapping(&quot;/&quot;)
+//	     public String home(Model model,
+//	                        @RequestParam(value = &quot;keyword&quot;, required = false) String keyword,
+//	                        @RequestParam(defaultValue = &quot;1&quot;) int pageNo,
+//	                        @RequestParam(defaultValue = &quot;5&quot;) int pageSize) {
+//
+//	         Page&lt;Employee&gt; page = service.getAllEmp(keyword, pageNo, pageSize);
+//	         List&lt;Employee&gt; employees = page.getContent();
+//
+//	         model.addAttribute(&quot;emp&quot;, employees);
+//	         model.addAttribute(&quot;keyword&quot;, keyword);
+//	         model.addAttribute(&quot;currentPage&quot;, pageNo);
+//	         model.addAttribute(&quot;totalPages&quot;, page.getTotalPages());
+//
+//	         return &quot;index.html&quot;;
+//	     }
+
+//	WORKINGGBETTER     
+//	     @GetMapping(&quot;/&quot;)
+//	     public String home(Model model,
+//	                        @RequestParam(value = &quot;keyword&quot;, required = false) String keyword,
+//	                        @RequestParam(defaultValue = &quot;1&quot;) int pageNo,
+//	                        @RequestParam(defaultValue = &quot;3&quot;) int pageSize) {
+//
+//	         Page&lt;Employee&gt; page = service.getAllEmp(keyword, pageNo, pageSize);
+//	         List&lt;Employee&gt; employees = page.getContent();
+//
+//	         model.addAttribute(&quot;emp&quot;, employees);
+//	         model.addAttribute(&quot;keyword&quot;, keyword);
+//	         model.addAttribute(&quot;currentPage&quot;, pageNo);
+//
+//	         int totalPages = page.getTotalPages();
+//	         model.addAttribute(&quot;totalPages&quot;, totalPages);
+//
+//	         if (pageNo &gt; totalPages) {
+//	             // Set pageNo to last page if it exceeds the total pages
+//	             pageNo = totalPages;
+//	             // Retrieve the page again with the updated pageNo
+//	             page = service.getAllEmp(keyword, pageNo, pageSize);
+//	             employees = page.getContent();
+//	             model.addAttribute(&quot;emp&quot;, employees);
+//	         }
+//
+//	         return &quot;index.html&quot;;
+//	     }
+
+//    Beforee Sorting 	     
+//	     @GetMapping(&quot;/&quot;)
+//	     public String home(Model model,
+//	                        @RequestParam(value = &quot;keyword&quot;, required = false) String keyword,
+//	                        @RequestParam(defaultValue = &quot;1&quot;) int pageNo,
+//	                        @RequestParam(defaultValue = &quot;3&quot;) int pageSize) {
+//
+//	         Page&lt;Employee&gt; page = service.getAllEmp(keyword, pageNo, pageSize);
+//	         List&lt;Employee&gt; employees = page.getContent();
+//
+//	         model.addAttribute(&quot;emp&quot;, employees);
+//	         model.addAttribute(&quot;keyword&quot;, keyword);
+//	         model.addAttribute(&quot;currentPage&quot;, pageNo);
+//
+//	         int totalPages = page.getTotalPages();
+//	         model.addAttribute(&quot;totalPages&quot;, totalPages);
+//
+//	         // Disable Previous button on the first page
+//	         boolean isFirstPage = pageNo == 1;
+//	         model.addAttribute(&quot;isFirstPage&quot;, isFirstPage);
+//
+//	         // Disable Next button on the last page
+//	         boolean isLastPage = pageNo == totalPages;
+//	         model.addAttribute(&quot;isLastPage&quot;, isLastPage);
+//
+//	         if (pageNo &gt; totalPages) {
+//	             // Set pageNo to last page if it exceeds the total pages
+//	             pageNo = totalPages;
+//	             // Retrieve the page again with the updated pageNo
+//	             page = service.getAllEmp(keyword, pageNo, pageSize);
+//	             employees = page.getContent();
+//	             model.addAttribute(&quot;emp&quot;, employees);
+//	         }
+//
+//	         return &quot;index.html&quot;;
+//	     }
+
+//	 	@GetMapping(&quot;/&quot;)
+//		public String home(Model model,
+//				@RequestParam(value = &quot;keyword&quot;, required = false) String keyword,
+//				@RequestParam(defaultValue = &quot;1&quot;) int pageNo,
+//				@RequestParam(defaultValue = &quot;5&quot;) int pageSize) {
+//
+//			Page&lt;Employee&gt; page = service.getAllEmp(keyword, pageNo, pageSize);
+//			List&lt;Employee&gt; employees = page.getContent();
+//
+//			model.addAttribute(&quot;emp&quot;, employees);
+//			model.addAttribute(&quot;keyword&quot;, keyword);
+//			model.addAttribute(&quot;currentPage&quot;, pageNo);
+//			model.addAttribute(&quot;totalPages&quot;, page.getTotalPages());
+//
+//			return &quot;index.html&quot;;
+//		}
+
+//	@GetMapping(&quot;/&quot;)
+//	public String home(Model m,
+//			@Param(&quot;keyword&quot;) String keyword) {
+//		
+//		
+//		List&lt;Employee&gt; e =service.getAllEmp(keyword);
+//		m.addAttribute(&quot;emp&quot;, e);
+//		m.addAttribute(&quot;keyword&quot;,keyword);
+//
+//		
+//	//	return findPaginated(1, m);
+//	
+//		
+//		return &quot;index.html&quot;;
+//		}
+//	
+//	@GetMapping(&quot;/page/{pageNo}&quot;)
+//	public String findPaginated(@PathVariable(value = &quot;pageNo&quot;) int pageNo, Model m) {
+//		int pageSize = 5;
+//		
+//		Page&lt;Employee&gt; page = service.findPaginated(pageNo, pageSize);
+//		List&lt;Employee&gt; listEmployees = page.getContent();
+//		
+//		m.addAttribute(&quot;currentPage&quot;, pageNo);
+//		m.addAttribute(&quot;totalPages&quot;, page.getTotalPages());
+//		m.addAttribute(&quot;totalItems&quot;, page.getTotalElements());
+//		m.addAttribute(&quot;listEmployee&quot;, listEmployees);
+//		
+//		return &quot;index.html&quot;;
+//		
+//	}
+
+//	@GetMapping(&quot;/{page}&quot;)
+//	public String Pagination(@PathVariable(&quot;page&quot;) Integer page ,  Model m,
+//			@Param(&quot;keyword&quot;) String keyword) {
+//		
+//		
+//		Pageable pageable  =  PageRequest.of(page, 5);
+//		
+//		Page&lt;Employee&gt; e =service.getEmpId(page,pageable);
+//		m.addAttribute(&quot;emp&quot;, e);
+//		m.addAttribute(&quot;keyword&quot;,keyword);
+//		m.addAttribute(&quot;currentPage&quot;,page);
+//	    m.addAttribute(&quot;totalPages&quot;,e.getTotalPages());
+//	
+//		
+//		return &quot;index.html&quot;;
+//		}
+//	
+
+//	     @GetMapping(&quot;/&quot;)
+//	     public String home(Model model,
+//	                        @RequestParam(value = &quot;keyword&quot;, required = false) String keyword,
+//	                        @RequestParam(defaultValue = &quot;1&quot;) int pageNo,
+//	                        @RequestParam(defaultValue = &quot;3&quot;) int pageSize,
+//	                        @RequestParam(defaultValue = &quot;name&quot;) String sortBy,
+//	                        @RequestParam(defaultValue = &quot;asc&quot;) String sortDirection) {
+//
+//	         Sort sort = Sort.by(sortDirection.equalsIgnoreCase(&quot;asc&quot;) ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+//	         Page&lt;Employee&gt; page = service.getAllEmp(keyword, pageNo, pageSize, sort);
+//	         List&lt;Employee&gt; employees = page.getContent();
+//
+//	         model.addAttribute(&quot;emp&quot;, employees);
+//	         model.addAttribute(&quot;keyword&quot;, keyword);
+//	         model.addAttribute(&quot;currentPage&quot;, pageNo);
+//	         model.addAttribute(&quot;sortBy&quot;, sortBy);
+//	         model.addAttribute(&quot;sortDirection&quot;, sortDirection);
+//
+//	         int totalPages = page.getTotalPages();
+//	         model.addAttribute(&quot;totalPages&quot;, totalPages);
+//
+//	         // Disable Previous button on the first page
+//	         boolean isFirstPage = pageNo == 1;
+//	         model.addAttribute(&quot;isFirstPage&quot;, isFirstPage);
+//
+//	         // Disable Next button on the last page
+//	         boolean isLastPage = pageNo == totalPages;
+//	         model.addAttribute(&quot;isLastPage&quot;, isLastPage);
+//
+//	         if (pageNo &gt; totalPages) {
+//	             // Set pageNo to last page if it exceeds the total pages
+//	             pageNo = totalPages;
+//	             // Retrieve the page again with the updated pageNo
+//	             page = service.getAllEmp(keyword, pageNo, pageSize, sort);
+//	             employees = page.getContent();
+//	             model.addAttribute(&quot;emp&quot;, employees);
+//	         }
+//
+//	         return &quot;index.html&quot;;
+//	     }
+
+//	     @GetMapping(&quot;/&quot;)
+//	     public String home(Model model,
+//	                        @RequestParam(value = &quot;keyword&quot;, required = false) String keyword,
+//	                        @RequestParam(defaultValue = &quot;1&quot;) int pageNo,
+//	                        @RequestParam(defaultValue = &quot;3&quot;) int pageSize,
+//	                        @RequestParam(defaultValue = &quot;name&quot;) String sortBy) {
+//
+//	         Page&lt;Employee&gt; page = service.getAllEmp(keyword, pageNo, pageSize, sortBy);
+//	         List&lt;Employee&gt; employees = page.getContent();
+//
+//	         model.addAttribute(&quot;emp&quot;, employees);
+//	         model.addAttribute(&quot;keyword&quot;, keyword);
+//	         model.addAttribute(&quot;currentPage&quot;, pageNo);
+//
+//	         int totalPages = page.getTotalPages();
+//	         model.addAttribute(&quot;totalPages&quot;, totalPages);
+//
+//	         // Disable Previous button on the first page
+//	         boolean isFirstPage = pageNo == 1;
+//	         model.addAttribute(&quot;isFirstPage&quot;, isFirstPage);
+//
+//	         // Disable Next button on the last page
+//	         boolean isLastPage = pageNo == totalPages;
+//	         model.addAttribute(&quot;isLastPage&quot;, isLastPage);
+//
+//	         if (pageNo &gt; totalPages) {
+//	             // Set pageNo to last page if it exceeds the total pages
+//	             pageNo = totalPages;
+//	             // Retrieve the page again with the updated pageNo
+//	             page = service.getAllEmp(keyword, pageNo, pageSize, sortBy);
+//	             employees = page.getContent();
+//	             model.addAttribute(&quot;emp&quot;, employees);
+//	         }
+//
+//	         return &quot;index.html&quot;;
+//	     }
+//
+//	     
+
+//	    
+
+	@GetMapping(&quot;/&quot;)
+	public String home(Model model, @RequestParam(value = &quot;keyword&quot;, required = false) String keyword,
+			@RequestParam(defaultValue = &quot;1&quot;) int pageNo, @RequestParam(defaultValue = &quot;5&quot;) int pageSize,
+			@RequestParam(defaultValue = &quot;id&quot;) String sortBy, @RequestParam(defaultValue = &quot;asc&quot;) String sortOrder) {
+
+<span class="pc bpc" id="L304" title="4 of 8 branches missed.">		if (sortBy.equals(&quot;name&quot;) || sortBy.equals(&quot;address&quot;) || sortBy.equals(&quot;email&quot;) || sortBy.equals(&quot;salary&quot;)) {</span>
+			// Update the sortBy value based on the button clicked
+<span class="nc" id="L306">			sortBy = sortBy;</span>
+		}
+
+//	         if (sortOrder.equals(&quot;desc&quot;)) {
+//	             sortBy += &quot; DESC&quot;;
+//	         }
+
+<span class="fc" id="L313">		Page&lt;Employee&gt; page = service.getAllEmp(keyword, pageNo, pageSize, sortBy, sortOrder);</span>
+<span class="fc" id="L314">		List&lt;Employee&gt; employees = page.getContent();</span>
+
+<span class="fc" id="L316">		model.addAttribute(&quot;emp&quot;, employees);</span>
+<span class="fc" id="L317">		model.addAttribute(&quot;keyword&quot;, keyword);</span>
+<span class="fc" id="L318">		model.addAttribute(&quot;currentPage&quot;, pageNo);</span>
+<span class="fc" id="L319">		model.addAttribute(&quot;pageSize&quot;, pageSize);</span>
+
+<span class="fc" id="L321">		int totalPages = page.getTotalPages();</span>
+<span class="fc" id="L322">		model.addAttribute(&quot;totalPages&quot;, totalPages);</span>
+
+		// Disable Previous button on the first page
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">		boolean isFirstPage = pageNo == 1;</span>
+<span class="fc" id="L326">		model.addAttribute(&quot;isFirstPage&quot;, isFirstPage);</span>
+
+		// Disable Next button on the last page
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">		boolean isLastPage = pageNo == totalPages;</span>
+<span class="fc" id="L330">		model.addAttribute(&quot;isLastPage&quot;, isLastPage);</span>
+
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">		if (pageNo &gt; totalPages) {</span>
+			// Set pageNo to last page if it exceeds the total pages
+<span class="nc" id="L334">			pageNo = totalPages;</span>
+			// Retrieve the page again with the updated pageNo
+<span class="nc" id="L336">			page = service.getAllEmp(keyword, pageNo, pageSize, sortBy, sortOrder);</span>
+<span class="nc" id="L337">			employees = page.getContent();</span>
+<span class="nc" id="L338">			model.addAttribute(&quot;emp&quot;, employees);</span>
+		}
+
+		// Pass the sorting parameters to the view
+<span class="fc" id="L342">		model.addAttribute(&quot;sort&quot;, sortBy);</span>
+<span class="fc" id="L343">		model.addAttribute(&quot;sortOrder&quot;, sortOrder);</span>
+
+<span class="fc" id="L345">		return &quot;index.html&quot;;</span>
+	}
+	@GetMapping(&quot;/loadMore&quot;)
+	public String loadMoreData(Model model, @RequestParam(defaultValue = &quot;1&quot;) int pageNo,
+	        @RequestParam(defaultValue = &quot;5&quot;) int pageSize, @RequestParam(defaultValue = &quot;id&quot;) String sortBy,
+	        @RequestParam(defaultValue = &quot;asc&quot;) String sortOrder) {
+
+<span class="nc" id="L352">	    Page&lt;Employee&gt; page = service.getAllEmp(null, pageNo, pageSize, sortBy, sortOrder);</span>
+<span class="nc" id="L353">	    List&lt;Employee&gt; employees = page.getContent();</span>
+
+<span class="nc" id="L355">	    model.addAttribute(&quot;emp&quot;, employees);</span>
+
+<span class="nc" id="L357">	    return &quot;_employeeList&quot;;</span>
+	}
+
+	@GetMapping(&quot;/addemp&quot;)
+	public String addEmpForm() {
+<span class="fc" id="L362">		return &quot;add_emp.html&quot;;</span>
+
+	}
+
+	@PostMapping(&quot;/register&quot;)
+    public String empRegister(@Valid @ModelAttribute Employee e, BindingResult bindingResult, HttpSession session) {
+<span class="nc bnc" id="L368" title="All 2 branches missed.">        if (bindingResult.hasErrors()) {</span>
+            // Handle validation errors
+<span class="nc" id="L370">            return &quot;add_emp.html&quot;;</span>
+        } else {
+<span class="nc" id="L372">            service.addEmp(e);</span>
+<span class="nc" id="L373">            session.setAttribute(&quot;msg&quot;, &quot;Employee Added Successfully&quot;);</span>
+<span class="nc" id="L374">            return &quot;redirect:/&quot;;</span>
+        }
+    }
+	
+	@GetMapping(&quot;/edit/{id}&quot;)
+	public String edit(@PathVariable int id, Model m) {
+<span class="nc" id="L380">	    Employee e = service.getEmpById(id);</span>
+<span class="nc" id="L381">	    m.addAttribute(&quot;emp&quot;, e);</span>
+
+<span class="nc" id="L383">	    return &quot;edit.html&quot;;</span>
+	}
+	
+
+	@PostMapping(&quot;/update&quot;)
+	public String updateEmp(@Valid @ModelAttribute Employee e, HttpSession session, BindingResult bindingResult) {
+//		service.addEmp(e);
+//		session.setAttribute(&quot;msg&quot;, &quot;Emp data update successfully&quot;);
+//		return &quot;redirect:/&quot;;
+		
+<span class="nc bnc" id="L393" title="All 2 branches missed.">		if (bindingResult.hasErrors()) {</span>
+            // Handle validation errors
+<span class="nc" id="L395">            return &quot;edit.html&quot;;</span>
+        } else {
+<span class="nc" id="L397">            service.addEmp(e);</span>
+<span class="nc" id="L398">            session.setAttribute(&quot;msg&quot;, &quot;Emp data update successfully&quot;);</span>
+<span class="nc" id="L399">            return &quot;redirect:/&quot;;</span>
+        }
+		
+
+	}
+
+	@GetMapping(&quot;/delete/{id}&quot;)
+	public String deleteEmp(@PathVariable int id, HttpSession session) {
+<span class="nc" id="L407">		service.deleteEmp(id);</span>
+<span class="nc" id="L408">		session.setAttribute(&quot;msg&quot;, &quot;Emp data delete successfully&quot;);</span>
+
+<span class="nc" id="L410">		return &quot;redirect:/&quot;;</span>
+
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

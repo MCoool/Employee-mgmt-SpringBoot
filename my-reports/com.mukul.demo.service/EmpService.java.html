@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmpService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Emp-System</a> &gt; <a href="index.source.html" class="el_package">com.mukul.demo.service</a> &gt; <span class="el_source">EmpService.java</span></div><h1>EmpService.java</h1><pre class="source lang-java linenums">package com.mukul.demo.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Service;
+
+import com.mukul.demo.entity.*;
+import com.mukul.demo.repository.*;
+
+@Service
+public class EmpService {
+	
+	@Autowired
+	private final EmpRepo repo;
+	
+	 @Autowired
+<span class="fc" id="L24">	   public EmpService(EmpRepo repo) {</span>
+<span class="fc" id="L25">	        this.repo = repo;</span>
+<span class="fc" id="L26">	    }</span>
+	 
+//	 public ArrayList&lt;Employee&gt; getAutocompleteSuggestions(String searchTerm) {
+//	        return repo.findByNameContainingIgnoreCase(searchTerm);
+//	    }
+//	 
+//	 public Page&lt;Employee&gt; getAllEmp(String keyword, int pageNo, int pageSize) {
+//		    Pageable pageable;
+//		    if (pageNo &lt;= 0) {
+//		        pageable = PageRequest.of(0, pageSize);
+//		    } else {
+//		        pageable = PageRequest.of(pageNo - 1, pageSize);
+//		    }
+//		    if (keyword != null) {
+//		        return repo.searchEmpPageable(keyword, pageable);
+//		    }
+//		    return repo.findAll(pageable);
+//		}
+
+	 
+//		public Page&lt;Employee&gt; getAllEmp(String keyword, int pageNo, int pageSize, Sort sort) {
+//			Pageable pageable;
+//			if (pageNo &lt;= 0) {
+//				pageable = PageRequest.of(0, pageSize, sort);
+//			} else {
+//				pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+//			}
+//			if (keyword != null) {
+//				return repo.searchEmpPageable(keyword, pageable);
+//			}
+//			return repo.findAll(pageable);
+//		}
+//	 
+	 
+	 
+	 
+	 
+
+//public Page&lt;Employee&gt; getAllEmp(String keyword, int pageNo, int pageSize, String sortBy) {
+//    Pageable pageable;
+//    if (pageNo &lt;= 0) {
+//        pageable = PageRequest.of(0, pageSize, Sort.by(sortBy));
+//    } else {
+//        pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
+//    }
+//    if (keyword != null) {
+//        return repo.searchEmpPageable(keyword, pageable);
+//    }
+//    return repo.findAll(pageable);
+//}
+
+//	 public Page&lt;Employee&gt; getAllEmp(String keyword, int pageNo, int pageSize, String sortBy, String sortOrder, boolean sortByInteger) {
+//		    Pageable pageable;
+//
+//		    if (sortByInteger &amp;&amp; sortBy.equals(&quot;salary&quot;)) {
+//		        Sort sort = Sort.by(sortOrder.equalsIgnoreCase(&quot;asc&quot;) ? Direction.ASC : Direction.DESC, &quot;salary&quot;);
+//		        pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+//		    } else {
+//		        Sort sort = Sort.by(sortOrder.equalsIgnoreCase(&quot;asc&quot;) ? Direction.ASC : Direction.DESC,&quot;salary&quot;);
+//		        pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+//		    }
+//
+//		    if (keyword != null) {
+//		        return repo.searchEmpPageable(keyword.toLowerCase(), pageable);
+//		    }
+//
+//		    return repo.findAll(pageable);
+//		}
+	 
+	 
+	 
+	 
+	 public Page&lt;Employee&gt; getAllEmp(String keyword, int pageNo, int pageSize, String sortBy, String sortOrder) {
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">		    Sort.Direction direction = sortOrder.equalsIgnoreCase(&quot;asc&quot;) ? Sort.Direction.ASC : Sort.Direction.DESC;</span>
+<span class="fc" id="L100">		    Sort sort = Sort.by(direction, sortBy);</span>
+		    
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">		    int pageIndex = pageNo &gt; 0 ? pageNo - 1 : 0; // Ensure non-negative page index</span>
+<span class="fc" id="L103">		    Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);</span>
+
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">		    if (keyword != null) {</span>
+<span class="fc" id="L106">		        return repo.searchEmpPageable(keyword, sortBy, pageable);</span>
+		    }
+
+<span class="nc" id="L109">		    return repo.findAll(pageable);</span>
+		}
+
+
+
+	 public List&lt;String&gt; getAutocompleteSuggestions(String keyword) {
+<span class="nc" id="L115">	        return repo.findByNameContainingIgnoreCase(keyword);</span>
+	    }
+	
+	public void addEmp(Employee e) {
+<span class="nc" id="L119">		repo.save(e);</span>
+<span class="nc" id="L120">	}</span>
+	
+	public List&lt;Employee&gt; getAllEmp(String keyword){
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">		if(keyword != null) {</span>
+<span class="nc" id="L124">			return repo.searchEmp(keyword);</span>
+		}
+		
+<span class="fc" id="L127">		return repo.findAll();</span>
+	}
+	
+//	public Page&lt;Employee&gt; getEmpId(int id, Pageable pageable){
+//		Optional&lt;Employee&gt; e= repo.findById(id);
+//		if(e.isPresent()) {
+//			return (Page&lt;Employee&gt;) e.get();
+//		}
+//		return null;
+//		
+//	}
+	
+	
+	
+	public Page&lt;Employee&gt; findPaginated(int pageNo, int pageSize) {
+<span class="nc" id="L142">		Pageable pageable = PageRequest.of(pageNo - 1,pageSize);</span>
+		
+<span class="nc" id="L144">		return this.repo.findAll(pageable);</span>
+	}
+
+	public Employee getEmpById(int id) {
+<span class="fc" id="L148">		Optional&lt;Employee&gt; e= repo.findById(id);</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">		if(e.isPresent()) {</span>
+<span class="fc" id="L150">			return e.get();</span>
+		}
+<span class="fc" id="L152">		return null;</span>
+	}
+	
+	
+//	public Employee getId(int page) {
+//		Optional&lt;Employee&gt; e= repo.findById(page);
+//		if(e.isPresent()) {
+//			return e.get();
+//		}
+//		return null;
+//	}
+	
+	public void deleteEmp(int id) {
+<span class="nc" id="L165">		repo.deleteById(id);</span>
+<span class="nc" id="L166">	}</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
